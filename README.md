@@ -2,7 +2,7 @@
 
 entre na pasta:
 
-`C:\Users\SESI\Documents\TesteJustForYou\backend`
+`TesteJustForYou\backend`
 
 Rode esse comando
 
