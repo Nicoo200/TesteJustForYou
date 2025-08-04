@@ -2,66 +2,68 @@
 const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const cors = require('cors');
-require('dotenv').config(); // Para carregar variáveis de ambiente do .env
+require('dotenv').config(); // Carrega as variáveis de ambiente do arquivo .env
 
+// --- Inicialização e Configuração ---
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// Configurar CORS para permitir requisições do seu frontend
-// Mantenha esta URL correspondente à URL onde seu HTML está sendo servido (ex: Live Server)
-app.use(cors({
-    origin: 'http://127.0.0.1:5500' // MUITO IMPORTANTE: Ajuste para a URL correta do seu frontend!
-}));
-app.use(express.json()); // Para parsear JSON no corpo das requisições
-
-// **ATENÇÃO: Sua chave de API DEVE ser armazenada em variáveis de ambiente!**
-// Crie um arquivo .env na mesma pasta do server.js com:
-// GEMINI_API_KEY="SUA_CHAVE_DE_API_DO_GEMINI_AQUI"
-// Para este exemplo, você usaria: GEMINI_API_KEY="AIzaSyDpEzZ7y3ALEzIHgm5qupAqePUwxF5E5cY"
+// --- Validação das Variáveis de Ambiente ---
 const API_KEY = process.env.GEMINI_API_KEY;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 if (!API_KEY) {
-    console.error("Erro: Variável de ambiente GEMINI_API_KEY não definida. Por favor, crie um arquivo .env na raiz do backend.");
-    process.exit(1);
+    console.error("ERRO CRÍTICO: Variável de ambiente GEMINI_API_KEY não foi definida.");
+    console.error("Por favor, crie um arquivo .env na raiz do projeto e adicione sua chave.");
+    process.exit(1); // Encerra a aplicação se a chave essencial estiver faltando
 }
 
+// --- Configuração de Middlewares ---
+
+// Configuração de CORS para permitir requisições apenas da URL do seu frontend
+const corsOptions = {
+    origin: FRONTEND_URL || 'http://127.0.0.1:5500' // Usa a URL do .env ou um padrão seguro
+};
+
+app.use(cors(corsOptions));
+app.use(express.json()); // Middleware para interpretar o corpo das requisições como JSON
+
+// --- Inicialização do Cliente da API Gemini ---
 const genAI = new GoogleGenerativeAI(API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // mudamos para o gemini flash
 
+// --- Definição da Rota Principal da API ---
 app.post('/ask-gemini', async (req, res) => {
+    // 1. Validar a requisição
     const { question } = req.body;
-
-    if (!question) {
-        return res.status(400).json({ error: 'Nenhuma pergunta fornecida.' });
+    if (!question || typeof question !== 'string' || question.trim() === '') {
+        return res.status(400).json({ error: 'Nenhuma pergunta válida foi fornecida no corpo da requisição.' });
     }
 
     try {
-        // *** MUDANÇA AQUI: Utilizando o modelo gemini-flash ***
-        const model = genAI.getGenerativeModel({ model: "gemini-flash" });
-        
-        // Crie um histórico de conversa básico para manter o contexto, se necessário
-        // Para uma pergunta simples e única, o histórico pode não ser crucial.
-        // const chat = model.startChat({
-        //     history: [ /* histórico de mensagens anteriores, se houver */ ],
-        //     generationConfig: {
-        //         maxOutputTokens: 100, // Limite para respostas concisas
-        //     },
-        // });
-
-        // Se você quiser que a resposta seja mais "Google-like", pode adicionar instruções na pergunta
+        // 2. Preparar o prompt para o modelo
+        // Adicionar instruções ao prompt pode guiar o modelo para o formato de resposta desejado
         const prompt = `Responda de forma concisa e factual, como uma busca do Google: ${question}`;
 
-        const result = await model.generateContent(prompt); // Usando generateContent para uma única pergunta
+        // 3. Chamar a API e gerar o conteúdo
+        const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
+
+        // 4. Enviar a resposta de volta ao cliente
         res.json({ answer: text });
+
     } catch (error) {
+        // 5. Tratar possíveis erros da API ou do servidor
         console.error("Erro ao chamar a API do Gemini:", error);
-        res.status(500).json({ error: "Ocorreu um erro ao processar sua pergunta. Verifique o console do servidor." });
+        res.status(500).json({ error: "Ocorreu um erro ao processar sua pergunta. Verifique o console do servidor para mais detalhes." });
     }
 });
 
+// --- Inicialização do Servidor ---
 app.listen(port, () => {
     console.log(`Servidor backend rodando em http://localhost:${port}`);
     console.log(`Modelo Gemini utilizado: gemini-flash`);
-    console.log("Certifique-se de que sua chave GEMINI_API_KEY está no arquivo .env");
+    console.log(`Permitindo requisições da origem (CORS): ${corsOptions.origin}`);
+    console.log("Aguardando requisições na rota /ask-gemini...");
 });
