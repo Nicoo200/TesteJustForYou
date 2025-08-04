@@ -1,0 +1,123 @@
+/* Copie o conteúdo de style.css do exemplo anterior (é o mesmo) */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    color: #333;
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 700px;
+    text-align: center;
+    margin-top: 50px;
+}
+
+h1 {
+    color: #4285F4;
+    margin-bottom: 10px;
+    font-size: 2.2em;
+}
+
+p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.search-box {
+    display: flex;
+    margin-bottom: 30px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+#questionInput {
+    flex-grow: 1;
+    padding: 15px 20px;
+    border: none;
+    font-size: 1.1em;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#questionInput::placeholder {
+    color: #aaa;
+}
+
+#askButton {
+    padding: 15px 25px;
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    outline: none;
+}
+
+#askButton:hover {
+    background-color: #357ae8;
+}
+
+#askButton:active {
+    transform: translateY(1px);
+}
+
+.answer-box {
+    background-color: #e8f0fe;
+    border: 1px solid #c5dafc;
+    border-radius: 8px;
+    padding: 25px;
+    min-height: 100px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.answer-text {
+    font-size: 1.2em;
+    color: #333;
+    line-height: 1.6;
+    word-wrap: break-word;
+    max-width: 100%;
+}
+
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4285F4;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    display: none;
+    position: absolute;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.disclaimer {
+    font-size: 0.9em;
+    color: #777;
+    margin-top: 20px;
+}

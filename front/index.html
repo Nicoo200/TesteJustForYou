@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Search (Com Backend Seguro)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Pesquisa Gemini</h1>
+        <p>Faça uma pergunta simples e obtenha uma resposta direta do Gemini.</p>
+        <div class="search-box">
+            <input type="text" id="questionInput" placeholder="Digite sua pergunta aqui..." autofocus>
+            <button id="askButton">Perguntar</button>
+        </div>
+        <div class="answer-box">
+            <div id="answer" class="answer-text">
+                <p>Suas respostas aparecerão aqui.</p>
+            </div>
+            <div id="loading" class="loading-spinner"></div>
+        </div>
+        <p class="disclaimer">
+            * Esta aplicação usa um servidor backend para se comunicar com a API do Gemini de forma segura, protegendo sua chave de API.
+        </p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
